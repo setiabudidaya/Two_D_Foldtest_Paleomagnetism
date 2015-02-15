@@ -1,0 +1,219 @@
+import pmag,pmagplotlib,ipmag
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import itertools
+%matplotlib inline
+
+""" Data taken from my PhD thesis: Magnetostratigraphy and Tectonic Rotation in South Wales; University of Liverpool (UK), 1991"""
+data_n_limb = pd.read_csv('Data/South Wales/C_SW_fold_test_north_limb.txt',sep=r"\s+")
+data_s_limb = pd.read_csv('Data/South Wales/C_SW_fold_test_south_limb.txt',sep=r"\s+")
+data_n_limb, data_s_limb
+data_n_limb = data_n_limb[['Dec','Inc','Bed_Az','Bed_Dip']].values
+data_s_limb = data_s_limb[['Dec','Inc','Bed_Az','Bed_Dip']].values
+data_n_limb = data_n_limb.transpose()
+data_s_limb = data_s_limb.transpose()
+data_n_limb_temp = data_n_limb.copy()
+data_s_limb_temp = data_s_limb.copy()
+nstep=50
+x = np.linspace(0,1,nstep+1)
+k = np.zeros((nstep+1,nstep+1))
+inc = np.zeros((nstep+1, nstep+1))
+for i in range(nstep+1):
+    data_n_limb_temp[3]=data_n_limb[3]*x[i]
+    for j in range(nstep+1):
+        data_s_limb_temp[3]=data_s_limb[3]*x[j]
+        data_n_limb_final=data_n_limb_temp.transpose()
+        data_s_limb_final=data_s_limb_temp.transpose()       
+        data_final=np.array([item for item in itertools.chain(data_n_limb_final, data_s_limb_final)])
+        data_untilt=ipmag.dotilt_V(data_final)
+        data_untilt=np.array(data_untilt)
+        tilted_direction=data_untilt.transpose()
+        tilted_mean=pmag.fisher_mean(tilted_direction)
+        k[i,j]=tilted_mean.get('k')
+        inc[i,j]=tilted_mean.get('inc') 
+fig = plt.figure(figsize=(8, 6), dpi=100)
+X,Y= np.meshgrid(x,x)
+#print X,Y
+CS1=plt.contour(X,Y,k)
+CS2=plt.contour(X,Y,inc, levels=[-5.0, 0.0,5.0], colors='k')
+plt.xlabel('Unfolding North Limb')
+plt.ylabel('Unfolding South Limb')
+plt.clabel(CS1, inline=1,fmt='%1.0f', fontsize=10)
+plt.clabel(CS2, inline=1, fmt='%1.1f',fontsize=10)
+plt.title('Contour of k-values and Expected Mean Inclination')
+nstep=50
+x = np.linspace(0,1,nstep+1)
+k = np.zeros((nstep+1,nstep+1))
+inc = np.zeros((nstep+1, nstep+1))
+dec = np.zeros((nstep+1, nstep+1))
+target_i = []
+target_j =[]
+target_dec = []
+target_inc = []
+target_k = []
+for i in range(nstep+1):
+    data_n_limb_temp[3]=data_n_limb[3]*x[i]
+    for j in range(nstep+1):
+        data_s_limb_temp[3]=data_s_limb[3]*x[j]
+        data_n_limb_final=data_n_limb_temp.transpose()
+        data_s_limb_final=data_s_limb_temp.transpose()       
+        data_final=np.array([item for item in itertools.chain(data_n_limb_final, data_s_limb_final)])
+        data_untilt=ipmag.dotilt_V(data_final)
+        data_untilt=np.array(data_untilt)
+        tilted_direction=data_untilt.transpose()
+        tilted_mean=pmag.fisher_mean(tilted_direction)
+        k[i,j]=tilted_mean.get('k')
+        inc[i,j]=tilted_mean.get('inc')
+        dec[i,j]=tilted_mean.get('dec')
+        if (k[i,j]>10.0 and 5.0>inc[i,j]>-5.0):
+            #print i*0.02,j*0.02, dec[i,j], inc[i,j], k[i,j]
+            target_i +=[(i*0.02)]
+            target_j +=[(j*0.02)]
+            target_dec +=[(dec[i,j])]
+            target_inc +=[(inc[i,j])]
+            target_k +=[(k[i,j])]
+target_i=np.array(target_i);target_j=np.array(target_j);target_dec=np.array(target_dec);target_inc=np.array(target_inc);target_k=np.array(target_k)
+target_i.mean(),target_j.mean(),target_dec.mean(),target_inc.mean(),target_k.mean()
+
+""" Data taken from my PhD thesis: Magnetostratigraphy and Tectonic Rotation in South Wales; University of Liverpool (UK), 1991"""
+data_n_limb = pd.read_csv('Data/South Wales/D_SW_fold_test_north_limb.txt',sep=r"\s+")
+data_s_limb = pd.read_csv('Data/South Wales/D_SW_fold_test_south_limb.txt',sep=r"\s+")
+data_n_limb, data_s_limb
+data_n_limb = data_n_limb[['Dec','Inc','Bed_Az','Bed_Dip']].values
+data_s_limb = data_s_limb[['Dec','Inc','Bed_Az','Bed_Dip']].values
+data_n_limb = data_n_limb.transpose()
+data_s_limb = data_s_limb.transpose()
+data_n_limb_temp = data_n_limb.copy()
+data_s_limb_temp = data_s_limb.copy()
+nstep=50
+x = np.linspace(0,1,nstep+1)
+k = np.zeros((nstep+1,nstep+1))
+inc = np.zeros((nstep+1, nstep+1))
+for i in range(nstep+1):
+    data_n_limb_temp[3]=data_n_limb[3]*x[i]
+    for j in range(nstep+1):
+        data_s_limb_temp[3]=data_s_limb[3]*x[j]
+        data_n_limb_final=data_n_limb_temp.transpose()
+        data_s_limb_final=data_s_limb_temp.transpose()       
+        data_final=np.array([item for item in itertools.chain(data_n_limb_final, data_s_limb_final)])
+        data_untilt=ipmag.dotilt_V(data_final)
+        data_untilt=np.array(data_untilt)
+        tilted_direction=data_untilt.transpose()
+        tilted_mean=pmag.fisher_mean(tilted_direction)
+        k[i,j]=tilted_mean.get('k')
+        inc[i,j]=tilted_mean.get('inc')
+fig = plt.figure(figsize=(8, 6), dpi=100)
+X,Y= np.meshgrid(x,x)
+#print X,Y
+CS1=plt.contour(X,Y,k)
+CS2=plt.contour(X,Y,inc, levels=[-1.0, -6.0,-11.0], colors='k')
+plt.xlabel('Folding North Limb')
+plt.ylabel('Folding South Limb')
+plt.clabel(CS1, inline=1,fmt='%1.0f', fontsize=10)
+plt.clabel(CS2, inline=1, fmt='%1.1f',fontsize=10)
+plt.title('Contour of k-values and Expected Mean Inclination')
+nstep=50
+x = np.linspace(0,1,nstep+1)
+k = np.zeros((nstep+1,nstep+1))
+inc = np.zeros((nstep+1, nstep+1))
+dec = np.zeros((nstep+1, nstep+1))
+target_i = []
+target_j =[]
+target_dec = []
+target_inc = []
+target_k = []
+for i in range(nstep+1):
+    data_n_limb_temp[3]=data_n_limb[3]*x[i]
+    for j in range(nstep+1):
+        data_s_limb_temp[3]=data_s_limb[3]*x[j]
+        data_n_limb_final=data_n_limb_temp.transpose()
+        data_s_limb_final=data_s_limb_temp.transpose()       
+        data_final=np.array([item for item in itertools.chain(data_n_limb_final, data_s_limb_final)])
+        data_untilt=ipmag.dotilt_V(data_final)
+        data_untilt=np.array(data_untilt)
+        tilted_direction=data_untilt.transpose()
+        tilted_mean=pmag.fisher_mean(tilted_direction)
+        k[i,j]=tilted_mean.get('k')
+        inc[i,j]=tilted_mean.get('inc')
+        dec[i,j]=tilted_mean.get('dec')
+        if (k[i,j]>130.0 and -1.0>inc[i,j]>-11.0):
+            #print i*0.02,j*0.02, dec[i,j], inc[i,j], k[i,j]
+            target_i +=[(i*0.02)]
+            target_j +=[(j*0.02)]
+            target_dec +=[(dec[i,j])]
+            target_inc +=[(inc[i,j])]
+            target_k +=[(k[i,j])]
+target_i=np.array(target_i);target_j=np.array(target_j);target_dec=np.array(target_dec);target_inc=np.array(target_inc);target_k=np.array(target_k)
+target_i.mean(),target_j.mean(),target_dec.mean(),target_inc.mean(),target_k.mean()
+
+""" Data taken from Szaniawski,R. et al (2003): Syn-folding remagnetization events in the French-Belgium Variscan thrust as markers of the fold-and-thrust belt kinematics; Bull. Soc. geol. Fr. t.174 no 5, pp.511-523 """
+data_n_limb = pd.read_csv('Data/South Wales/A_SW_fold_test_north_limb.txt',sep=r"\s+")
+data_s_limb = pd.read_csv('Data/South Wales/A_SW_fold_test_south_limb.txt',sep=r"\s+")
+data_n_limb, data_s_limb
+data_n_limb = data_n_limb[['Dec','Inc','Bed_Az','Bed_Dip']].values
+data_s_limb = data_s_limb[['Dec','Inc','Bed_Az','Bed_Dip']].values
+data_n_limb = data_n_limb.transpose()
+data_s_limb = data_s_limb.transpose()
+data_n_limb_temp = data_n_limb.copy()
+data_s_limb_temp = data_s_limb.copy()
+nstep=50
+x = np.linspace(0,1,nstep+1)
+k = np.zeros((nstep+1,nstep+1))
+inc = np.zeros((nstep+1, nstep+1))
+for i in range(nstep+1):
+    data_n_limb_temp[3]=data_n_limb[3]*x[i]
+    for j in range(nstep+1):
+        data_s_limb_temp[3]=data_s_limb[3]*x[j]
+        data_n_limb_final=data_n_limb_temp.transpose()
+        data_s_limb_final=data_s_limb_temp.transpose()       
+        data_final=np.array([item for item in itertools.chain(data_n_limb_final, data_s_limb_final)])
+        data_untilt=ipmag.dotilt_V(data_final)
+        data_untilt=np.array(data_untilt)
+        tilted_direction=data_untilt.transpose()
+        tilted_mean=pmag.fisher_mean(tilted_direction)
+        k[i,j]=tilted_mean.get('k')
+        inc[i,j]=tilted_mean.get('inc')
+fig = plt.figure(figsize=(8, 6), dpi=100)
+X,Y= np.meshgrid(x,x)
+#print X,Y
+CS1=plt.contour(X,Y,k)
+CS2=plt.contour(X,Y,inc, levels=[-5.0, 0.0, 5.0], colors='k')
+plt.xlabel('Folding North Limb')
+plt.ylabel('Folding South Limb')
+plt.clabel(CS1, inline=1,fmt='%1.0f', fontsize=10)
+plt.clabel(CS2, inline=1, fmt='%1.1f',fontsize=10)
+plt.title('Contour of k-values and Expected Mean Inclination')
+nstep=50
+x = np.linspace(0,1,nstep+1)
+k = np.zeros((nstep+1,nstep+1))
+inc = np.zeros((nstep+1, nstep+1))
+dec = np.zeros((nstep+1, nstep+1))
+target_i = []
+target_j =[]
+target_dec = []
+target_inc = []
+target_k = []
+for i in range(nstep+1):
+    data_n_limb_temp[3]=data_n_limb[3]*x[i]
+    for j in range(nstep+1):
+        data_s_limb_temp[3]=data_s_limb[3]*x[j]
+        data_n_limb_final=data_n_limb_temp.transpose()
+        data_s_limb_final=data_s_limb_temp.transpose()       
+        data_final=np.array([item for item in itertools.chain(data_n_limb_final, data_s_limb_final)])
+        data_untilt=ipmag.dotilt_V(data_final)
+        data_untilt=np.array(data_untilt)
+        tilted_direction=data_untilt.transpose()
+        tilted_mean=pmag.fisher_mean(tilted_direction)
+        k[i,j]=tilted_mean.get('k')
+        inc[i,j]=tilted_mean.get('inc')
+        dec[i,j]=tilted_mean.get('dec')
+        if (k[i,j]>13.0 and 5.0>inc[i,j]>-5.0):
+            #print i*0.02,j*0.02, dec[i,j], inc[i,j], k[i,j]
+            target_i +=[(i*0.02)]
+            target_j +=[(j*0.02)]
+            target_dec +=[(dec[i,j])]
+            target_inc +=[(inc[i,j])]
+            target_k +=[(k[i,j])]
+target_i=np.array(target_i);target_j=np.array(target_j);target_dec=np.array(target_dec);target_inc=np.array(target_inc);target_k=np.array(target_k)
+target_i.mean(),target_j.mean(),target_dec.mean(),target_inc.mean(),target_k.mean()
